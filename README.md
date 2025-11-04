@@ -141,7 +141,7 @@ tbot/
 ├── 📁 Security & Testing
 │   ├── test_security.py           # 🆕 Security system testing suite
 │   ├── basic-sec-hardening.md     # 🆕 Security implementation documentation
-│   └── SECURITY_INCIDENT.md       # 🚫 Security incident report (gitignored)
+│   
 │
 ├── 📁 Visual Assets
 │   └── assets/
