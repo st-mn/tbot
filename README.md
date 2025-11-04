@@ -142,7 +142,7 @@ tbot/
 
 The bot is configured to:
 - Fetch data from pump.fun with newest coins first
-- Display top 10 coins
+- Display top coins
 - Timeout after 30 seconds for web requests
 - Use a realistic User-Agent header
 
