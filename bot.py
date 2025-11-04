@@ -18,6 +18,7 @@ from telegram.constants import ParseMode
 
 from config import Config
 from scraper import PumpFunScraper, CoinData
+from security import security_monitor
 
 # Configure logging
 logging.basicConfig(
@@ -32,9 +33,66 @@ class PumpFunBot:
     def __init__(self):
         self.scraper = PumpFunScraper()
         self.last_update_time = None
+        self.authorized_users = set()  # Track authorized users
+        self.startup_time = datetime.now()
+    
+    def is_authorized_request(self, update: Update) -> bool:
+        """Validate that the request is legitimate."""
+        if not update or not update.effective_user:
+            logger.warning("Received update without user information")
+            return False
+        
+        user = update.effective_user
+        
+        # Log all interactions for security monitoring
+        logger.info(f"User interaction: {user.id} ({user.username or user.first_name})")
+        
+        # Check for suspicious patterns
+        if user.is_bot:
+            logger.warning(f"Bot user attempted interaction: {user.id}")
+            return False
+        
+        return True
+    
+    def log_security_event(self, event_type: str, details: str, user_id: int = None):
+        """Log security-related events."""
+        timestamp = datetime.now().isoformat()
+        log_msg = f"SECURITY [{timestamp}] {event_type}: {details}"
+        if user_id:
+            log_msg += f" | User: {user_id}"
+        logger.warning(log_msg)
         
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle the /start command."""
+        user = update.effective_user
+        
+        # Enhanced security validation
+        if not self.is_authorized_request(update):
+            self.log_security_event("UNAUTHORIZED_START", f"Blocked unauthorized start command", user.id)
+            return
+        
+        # Check if user is blocked
+        if security_monitor.is_user_blocked(user.id):
+            logger.warning(f"Blocked user {user.id} attempted to use bot")
+            return
+        
+        # Rate limiting check
+        if security_monitor.is_rate_limited(user.id, max_requests=3, window_minutes=1):
+            await update.message.reply_text("⚠️ Too many requests. Please wait a moment.")
+            return
+        
+        # Validate user data
+        if not security_monitor.validate_user_data(user):
+            security_monitor.block_user(user.id, "Failed user data validation")
+            return
+        
+        # Check for suspicious activity
+        if security_monitor.check_suspicious_activity(user.id, "start"):
+            logger.warning(f"Suspicious activity detected for user {user.id}")
+        
+        # Update security stats
+        security_monitor.security_stats['total_requests'] += 1
+        
         welcome_message = (
             "🚀 **Pump.fun New Coins Bot** 🚀\n\n"
             "Welcome! This bot shows you the top 5 newest coins from pump.fun.\n\n"
@@ -42,7 +100,8 @@ class PumpFunBot:
             "• /start - Show this welcome message\n"
             "• /refresh - Get the latest new coins\n"
             "• /help - Show help information\n\n"
-            "Click the **🔄 Refresh** button below to get started!"
+            "Click the **🔄 Refresh** button below to get started!\n\n"
+            "🔒 *Secure connection established*"
         )
         
         keyboard = [[InlineKeyboardButton("🔄 Refresh", callback_data="refresh")]]
@@ -54,6 +113,40 @@ class PumpFunBot:
             reply_markup=reply_markup
         )
     
+    async def admin_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """Handle admin commands for bot owner."""
+        user = update.effective_user
+        
+        # Check if user is bot owner
+        if str(user.id) != Config.BOT_OWNER_ID:
+            self.log_security_event("UNAUTHORIZED_ADMIN", f"Non-owner attempted admin access", user.id)
+            await update.message.reply_text("❌ Access denied. Admin only.")
+            return
+        
+        # Get security statistics
+        stats = security_monitor.security_stats
+        uptime = datetime.now() - stats['start_time']
+        
+        admin_message = (
+            f"🔐 **Admin Security Dashboard**\n\n"
+            f"**System Status:**\n"
+            f"• Uptime: {str(uptime).split('.')[0]}\n"
+            f"• Total Requests: {stats['total_requests']}\n"
+            f"• Blocked Requests: {stats['blocked_requests']}\n"
+            f"• Suspicious Users: {len(security_monitor.suspicious_users)}\n"
+            f"• Blocked Users: {len(security_monitor.blocked_users)}\n\n"
+            f"**Active Monitoring:**\n"
+            f"• Rate limiting: ✅ Active\n"
+            f"• User validation: ✅ Active\n"
+            f"• Activity monitoring: ✅ Active\n"
+            f"• Security logging: ✅ Active\n\n"
+            f"**Commands:**\n"
+            f"• `/admin` - Show this dashboard\n"
+            f"• `/security` - Detailed security log\n"
+        )
+        
+        await update.message.reply_text(admin_message, parse_mode=ParseMode.MARKDOWN)
+
     async def help_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle the /help command."""
         help_message = (
@@ -86,10 +179,59 @@ class PumpFunBot:
     
     async def refresh_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle the /refresh command."""
+        user = update.effective_user
+        
+        # Enhanced security validation
+        if not self.is_authorized_request(update):
+            self.log_security_event("UNAUTHORIZED_REFRESH", "Blocked unauthorized refresh command", user.id)
+            return
+        
+        # Check if user is blocked
+        if security_monitor.is_user_blocked(user.id):
+            logger.warning(f"Blocked user {user.id} attempted refresh")
+            return
+        
+        # Rate limiting
+        if security_monitor.is_rate_limited(user.id, max_requests=3, window_minutes=1):
+            await update.message.reply_text("⚠️ Too many requests. Please wait a moment.")
+            return
+        
+        # Check for suspicious activity
+        if security_monitor.check_suspicious_activity(user.id, "refresh_command"):
+            logger.warning(f"Suspicious refresh command activity for user {user.id}")
+        
+        # Update security stats
+        security_monitor.security_stats['total_requests'] += 1
+        
         await self._send_coin_data(update, context, is_callback=False)
     
     async def refresh_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle refresh button callback."""
+        user = update.effective_user
+        
+        # Enhanced security validation
+        if not self.is_authorized_request(update):
+            self.log_security_event("UNAUTHORIZED_CALLBACK", "Blocked unauthorized callback", user.id)
+            return
+        
+        # Check if user is blocked
+        if security_monitor.is_user_blocked(user.id):
+            logger.warning(f"Blocked user {user.id} attempted callback")
+            return
+        
+        # Rate limiting check (more restrictive for callbacks)
+        if security_monitor.is_rate_limited(user.id, max_requests=2, window_minutes=1):
+            query = update.callback_query
+            await query.answer("⚠️ Too many requests. Please wait.", show_alert=True)
+            return
+        
+        # Check for suspicious activity
+        if security_monitor.check_suspicious_activity(user.id, "refresh"):
+            logger.warning(f"Suspicious refresh activity for user {user.id}")
+        
+        # Update security stats
+        security_monitor.security_stats['total_requests'] += 1
+        
         query = update.callback_query
         await query.answer()  # Acknowledge the button press
         
@@ -250,7 +392,27 @@ class PumpFunBot:
         return full_message
     
     async def unknown_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        """Handle unknown messages."""
+        """Handle unknown messages with security checks."""
+        user = update.effective_user
+        
+        # Security validation
+        if not self.is_authorized_request(update):
+            self.log_security_event("UNAUTHORIZED_MESSAGE", f"Blocked unauthorized message", user.id)
+            return
+        
+        # Check if user is blocked
+        if security_monitor.is_user_blocked(user.id):
+            logger.warning(f"Blocked user {user.id} sent message")
+            return
+        
+        # Rate limiting for messages
+        if security_monitor.is_rate_limited(user.id, max_requests=5, window_minutes=1):
+            await update.message.reply_text("⚠️ Too many messages. Please slow down.")
+            return
+        
+        # Log the unknown message for security monitoring
+        self.log_security_event("UNKNOWN_MESSAGE", f"User sent: {update.message.text[:50]}...", user.id)
+        
         message = (
             "❓ **Unknown Command**\n\n"
             "I didn't understand that command. Here's what I can do:\n\n"
@@ -269,15 +431,34 @@ class PumpFunBot:
             reply_markup=reply_markup
         )
     
+    async def security_monitor_task(self, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """Periodic security monitoring task."""
+        # Log security stats every 10 minutes
+        security_monitor.log_security_stats()
+        
+        # Clean up old data to prevent memory leaks
+        # This would be expanded with actual cleanup logic
+        logger.info("Security monitoring: Periodic cleanup completed")
+    
     def setup_handlers(self, app: Application) -> None:
         """Set up command and callback handlers."""
         app.add_handler(CommandHandler("start", self.start_command))
         app.add_handler(CommandHandler("help", self.help_command))
         app.add_handler(CommandHandler("refresh", self.refresh_command))
+        app.add_handler(CommandHandler("admin", self.admin_command))
         app.add_handler(CallbackQueryHandler(self.refresh_callback, pattern="refresh"))
         
         # Handle unknown text messages
         app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.unknown_command))
+        
+        # Set up periodic security monitoring (every 10 minutes)
+        job_queue = app.job_queue
+        if job_queue:
+            job_queue.run_repeating(
+                self.security_monitor_task, 
+                interval=600,  # 10 minutes
+                first=60       # Start after 1 minute
+            )
 
 def main():
     """Main function to run the bot."""

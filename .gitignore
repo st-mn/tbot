@@ -121,3 +121,6 @@ dmypy.json
 
 # Node modules (in case we had any)
 node_modules/
+
+# Security incident reports (sensitive information)
+SECURITY_INCIDENT.md
