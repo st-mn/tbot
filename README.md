@@ -120,15 +120,39 @@ Once the bot is running, users can interact with it using:
 
 ```
 tbot/
-├── main.py          # Entry point
-├── bot.py           # Telegram bot logic
-├── scraper.py       # Web scraping functionality
-├── config.py        # Configuration management
-├── requirements.txt # Python dependencies
-├── .env.example     # Environment variables template
-├── .env            # Your environment variables (create this)
-├── .gitignore      # Git ignore rules
-└── README.md       # This file
+├── 📁 Core Application Files
+│   ├── main.py                    # Entry point with signal handling
+│   ├── bot.py                     # Telegram bot logic with security integration
+│   ├── scraper.py                 # pump.fun web scraping functionality
+│   ├── config.py                  # Configuration management with security settings
+│   └── security.py                # 🆕 Security monitoring and protection system
+│
+├── 📁 Configuration & Environment
+│   ├── .env                       # Your environment variables (TOKEN, etc.)
+│   ├── .env.example               # Environment variables template
+│   ├── requirements.txt           # Python dependencies
+│   └── .gitignore                 # Git ignore rules (includes security files)
+│
+├── 📁 Deployment & Infrastructure
+│   ├── Dockerfile                 # Docker container configuration
+│   ├── Procfile                   # Railway deployment process file
+│   └── DEPLOY.md                  # Deployment instructions
+│
+├── 📁 Security & Testing
+│   ├── test_security.py           # 🆕 Security system testing suite
+│   ├── basic-sec-hardening.md     # 🆕 Security implementation documentation
+│   └── SECURITY_INCIDENT.md       # 🚫 Security incident report (gitignored)
+│
+├── 📁 Visual Assets
+│   └── assets/
+│       ├── bot-profile-512.svg    # Bot profile image (vector)
+│       ├── bot-profile-512.png    # Bot profile image (raster)
+│       ├── favicon.svg            # Bot favicon
+│       ├── index.html             # Asset preview page
+│       └── README.md              # Asset documentation
+│
+└── 📁 Documentation
+    └── README.md                  # Main project documentation
 ```
 
 ## Configuration ⚙️
