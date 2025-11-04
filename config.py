@@ -15,6 +15,10 @@ class Config:
     # Debug mode
     DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
     
+    # Railway deployment settings
+    PORT = int(os.getenv('PORT', 8000))
+    RAILWAY_ENVIRONMENT = os.getenv('RAILWAY_ENVIRONMENT', 'development')
+    
     # Pump.fun URL for scraping
     PUMP_FUN_URL = "https://pump.fun/?coins_sort=created_timestamp&show_animations=false&view=table"
     
