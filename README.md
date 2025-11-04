@@ -8,7 +8,14 @@ A Python Telegram bot that fetches and displays the top 5 newest coins from [pum
 
 Click the link above or search for `@PumpingTbot` in Telegram to start using the bot!
 
-## 🎯 Quick Start
+## � Visual Assets
+
+Bot profile pictures and favicons are available in the [`assets/`](./assets/) directory:
+- 🚀 **Bot Profile Picture**: High-res rocket design for Telegram
+- 🌐 **Favicon**: Web icon for repository and sites
+- 📱 **Multiple Formats**: SVG (scalable) and conversion tools
+
+## �🎯 Quick Start
 
 **Just want to use the bot?** Go to [@PumpingTbot](https://t.me/PumpingTbot) and start chatting!
 

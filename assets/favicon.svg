@@ -1,0 +1,28 @@
+<!-- SVG Favicon for Pump.fun Telegram Bot -->
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="16" cy="16" r="15" fill="#1DA1F2" stroke="#0084D1" stroke-width="2"/>
+  
+  <!-- Rocket Icon -->
+  <g transform="translate(8, 6)">
+    <!-- Rocket Body -->
+    <ellipse cx="8" cy="12" rx="3" ry="8" fill="#FFFFFF"/>
+    
+    <!-- Rocket Tip -->
+    <ellipse cx="8" cy="5" rx="1.5" ry="3" fill="#FFD700"/>
+    
+    <!-- Rocket Fins -->
+    <polygon points="5,16 8,20 11,16 8,18" fill="#FF6B6B"/>
+    
+    <!-- Fire/Exhaust -->
+    <ellipse cx="8" cy="22" rx="2" ry="2" fill="#FF4444"/>
+    <ellipse cx="8" cy="23" rx="1" ry="1" fill="#FFAA00"/>
+  </g>
+  
+  <!-- Pump Symbol (P) -->
+  <text x="23" y="12" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#FFD700">P</text>
+  
+  <!-- Chart Lines (indicating growth/pump) -->
+  <polyline points="4,24 8,20 12,18 16,14" stroke="#00FF88" stroke-width="2" fill="none"/>
+  <circle cx="16" cy="14" r="1" fill="#00FF88"/>
+</svg>

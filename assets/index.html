@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pump.fun Telegram Bot - Asset Converter</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .asset {
+            margin: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        img, object {
+            max-width: 200px;
+            height: auto;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 10px;
+            background: white;
+        }
+        .download-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px;
+        }
+        .download-btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Pump.fun Telegram Bot Assets</h1>
+        <p>Visual assets for the pump.fun coin tracking Telegram bot</p>
+        
+        <div class="asset">
+            <h3>📱 Bot Profile Picture (512x512)</h3>
+            <object data="bot-profile-512.svg" type="image/svg+xml" width="200" height="200">
+                Your browser doesn't support SVG
+            </object>
+            <br>
+            <a href="bot-profile-512.svg" class="download-btn" download>Download SVG</a>
+            <p><small>Use this as Telegram bot profile picture (convert to PNG first)</small></p>
+        </div>
+        
+        <div class="asset">
+            <h3>🌐 Favicon (32x32)</h3>
+            <object data="favicon.svg" type="image/svg+xml" width="100" height="100">
+                Your browser doesn't support SVG
+            </object>
+            <br>
+            <a href="favicon.svg" class="download-btn" download>Download SVG</a>
+            <p><small>Use this as website/repository favicon</small></p>
+        </div>
+        
+        <div class="asset">
+            <h3>🔧 Instructions</h3>
+            <p><strong>For Telegram Bot Profile:</strong></p>
+            <ol style="text-align: left;">
+                <li>Convert bot-profile-512.svg to PNG (512x512)</li>
+                <li>Message @BotFather on Telegram</li>
+                <li>Send: <code>/setuserpic</code></li>
+                <li>Select your bot: <code>@PumpingTbot</code></li>
+                <li>Upload the PNG file</li>
+            </ol>
+            
+            <p><strong>For GitHub Repository:</strong></p>
+            <p>The favicon.svg will automatically be used by GitHub and browsers</p>
+        </div>
+        
+        <div class="asset">
+            <h3>🤖 Bot Info</h3>
+            <p><strong>Bot:</strong> <a href="https://t.me/PumpingTbot" style="color: #FFD700;">@PumpingTbot</a></p>
+            <p><strong>Repository:</strong> <a href="https://github.com/st-mn/tbot" style="color: #FFD700;">st-mn/tbot</a></p>
+            <p><strong>Function:</strong> Displays top 5 newest coins from pump.fun</p>
+        </div>
+    </div>
+</body>
+</html>
