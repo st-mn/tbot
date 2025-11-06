@@ -19,6 +19,7 @@ from telegram.constants import ParseMode
 from config import Config
 from scraper import PumpFunScraper, CoinData
 from security import security_monitor
+from perps import get_perps_info
 
 # Configure logging
 logging.basicConfig(
@@ -408,6 +409,45 @@ class PumpFunBot:
         # Rate limiting for messages
         if security_monitor.is_rate_limited(user.id, max_requests=5, window_minutes=1):
             await update.message.reply_text("⚠️ Too many messages. Please slow down.")
+            return
+        
+        # Get the message text
+        message_text = update.message.text.lower().strip() if update.message.text else ""
+        
+        # Handle 'perps' command
+        if message_text == 'perps':
+            # Log the perps request
+            logger.info(f"User {user.id} requested perps info")
+            
+            # Show loading message
+            loading_msg = await update.message.reply_text(
+                "🔄 Fetching perpetuals smart contract information...",
+                parse_mode=ParseMode.MARKDOWN
+            )
+            
+            try:
+                # Get perps info
+                perps_message = await get_perps_info()
+                
+                # Edit the loading message with the actual data
+                await loading_msg.edit_text(
+                    perps_message,
+                    parse_mode=ParseMode.MARKDOWN,
+                    disable_web_page_preview=True
+                )
+                
+                # Update security stats
+                security_monitor.security_stats['total_requests'] += 1
+                
+            except Exception as e:
+                logger.error(f"Error handling perps request: {e}")
+                await loading_msg.edit_text(
+                    "❌ **Error fetching contract information**\n\n"
+                    "Please try again later or check the contract manually:\n"
+                    "[View on Solana Explorer](https://explorer.solana.com/address/7VwAnHYuF5JCXhT9tLWNnbuD6buox8dPCpk7qBrMu3PA?cluster=devnet)",
+                    parse_mode=ParseMode.MARKDOWN,
+                    disable_web_page_preview=True
+                )
             return
         
         # Log the unknown message for security monitoring
