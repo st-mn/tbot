@@ -125,7 +125,6 @@ class PerpsContractInfo:
                 "",
                 f"**Program ID:** `{contract_id}`",
                 f"**Network:** {network}",
-                f"**Last Updated:** {timestamp[:19].replace('T', ' ')} UTC",
                 ""
             ]
             
