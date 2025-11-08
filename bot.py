@@ -95,11 +95,11 @@ class PumpFunBot:
         security_monitor.security_stats['total_requests'] += 1
         
         welcome_message = (
-            "🚀 **Pump.fun New Coins Bot** 🚀\n\n"
-            "Welcome! This bot shows you the top 5 newest coins from pump.fun.\n\n"
+            "🚀 **Pump.fun Coins Bot** 🚀\n\n"
+            "Welcome! This bot shows you the top 5 coins from pump.fun.\n\n"
             "**Commands:**\n"
             "• /start - Show this welcome message\n"
-            "• /refresh - Get the latest new coins\n"
+            "• /refresh - Get the latest   coins\n"
             "• /help - Show help information\n\n"
             "Click the **🔄 Refresh** button below to get started!\n\n"
             "🔒 *Secure connection established*"
@@ -151,11 +151,11 @@ class PumpFunBot:
     async def help_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle the /help command."""
         help_message = (
-            "📖 **Help - Pump.fun New Coins Bot**\n\n"
-            "This bot fetches and displays the top 5 newest coins from pump.fun.\n\n"
+            "📖 **Help - Pump.fun Coins Bot**\n\n"
+            "This bot fetches and displays the top 5 coins from pump.fun.\n\n"
             "**Available Commands:**\n"
             "• `/start` - Show welcome message and refresh button\n"
-            "• `/refresh` - Get the latest new coins data\n"
+            "• `/refresh` - Get the latest   coins data\n"
             "• `/help` - Show this help message\n\n"
             "**How to use:**\n"
             "1. Click the 🔄 Refresh button to fetch latest data\n"
@@ -253,7 +253,7 @@ class PumpFunBot:
                 chat_id = update.callback_query.message.chat_id
                 message_id = update.callback_query.message.message_id
             else:
-                # Send new message for command
+                # Send   message for command
                 loading_msg = await update.message.reply_text(
                     loading_message,
                     parse_mode=ParseMode.MARKDOWN
@@ -334,7 +334,7 @@ class PumpFunBot:
                     )
             except Exception as edit_error:
                 logger.error(f"Error editing message: {edit_error}")
-                # As last resort, send a new message
+                # As last resort, send a   message
                 await update.effective_chat.send_message(
                     error_message,
                     parse_mode=ParseMode.MARKDOWN,
@@ -358,7 +358,7 @@ class PumpFunBot:
             return "❌ No coins found"
         
         header = (
-            "🚀 **Top 5 New Coins from Pump.fun** 🚀\n"
+            "🚀 **Top 5   Coins from Pump.fun** 🚀\n"
             f"📅 Updated: {datetime.now().strftime('%H:%M:%S UTC')}\n\n"
         )
         
@@ -447,6 +447,33 @@ class PumpFunBot:
                     "[View on Solana Explorer](https://explorer.solana.com/address/7VwAnHYuF5JCXhT9tLWNnbuD6buox8dPCpk7qBrMu3PA?cluster=devnet)",
                     parse_mode=ParseMode.MARKDOWN,
                     disable_web_page_preview=True
+                )
+            return
+        
+        # Handle 'dex' command to open website
+        if message_text == 'dex':
+            # Log the dex request
+            logger.info(f"User {user.id} requested dex link")
+            
+            try:
+                # Send message with website link
+                await update.message.reply_text(
+                    "🌐 **Opening Trojan Perp DEX Platform**\n\n"
+                    "[Click here to open Trojan Perp DEX](https://stantoman.com)\n\n"
+                    "🔗 Direct link: https://stantoman.com",
+                    parse_mode=ParseMode.MARKDOWN,
+                    disable_web_page_preview=False
+                )
+                
+                # Update security stats
+                security_monitor.security_stats['total_requests'] += 1
+                
+            except Exception as e:
+                logger.error(f"Error handling dex request: {e}")
+                await update.message.reply_text(
+                    "❌ **Error opening DEX platform**\n\n"
+                    "Please try accessing directly: https://stantoman.com",
+                    parse_mode=ParseMode.MARKDOWN
                 )
             return
         
