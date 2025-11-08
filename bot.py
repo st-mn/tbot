@@ -458,8 +458,8 @@ class PumpFunBot:
             try:
                 # Send message with website link
                 await update.message.reply_text(
-                    "🌐 **Opening Trojan Perp DEX Platform**\n\n"
-                    "[Click here to open Trojan Perp DEX](https://stantoman.com)\n\n"
+                    "🌐 **Opening Perp DEX Platform**\n\n"
+                    "[Click here to open  Perp DEX](https://stantoman.com)\n\n"
                     "🔗 Direct link: https://stantoman.com",
                     parse_mode=ParseMode.MARKDOWN,
                     disable_web_page_preview=False
